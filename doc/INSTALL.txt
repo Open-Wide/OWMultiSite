@@ -1,0 +1,45 @@
+-------------------------
+owMultisite :
+-------------------------
+
+-------------------------
+Extension activation
+-------------------------
+
+1) Put content on extension in "extension/owmultisite" folder
+
+2) Activate extension :
+	Add the following to your settings/override/site.ini.append.php file:
+		[ExtensionSettings]
+		ActiveExtensions[]=owmultisite
+
+3) Regenerate autoloads
+
+4) Clear cache
+
+
+-------------------------
+owurl
+-------------------------
+To use owurl operator, please check following settings :
+
+ - site.ini :
+ 	[SiteSettings]
+ 		SiteURL
+ 	[SiteAccessSettings]
+	 	RelatedSiteAccessList[]
+	 	(PathPrefixExclude)
+	 	(PathPrefix)
+
+ - content.ini :
+ 	[NodeSettings]
+ 		RootNode
+ 		
+--------------------------------------------------
+Hope you find it useful! 
+
+Simon Boyer
+
+--------------------------------------------------
+The mandatory disclaimer: use at your own risk!
+--------------------------------------------------
