@@ -11,7 +11,7 @@ class OWMultisiteURL
 	 */
 	public function __construct( $node )
     {
-    	if ( is_integer( $node ) ) {
+    	if ( is_numeric( $node ) ) {
 			$node = eZContentObjectTreeNode::fetch( $node );
 		}
 		if ( $node instanceof eZContentObjectTreeNode ) {
