@@ -40,7 +40,10 @@ class owMultisiteOperators
     {
 
 		return array( 		
-						'owurl' => array( ),
+						'owurl' => array( 'serverURL' => array( 'type' => 'string',
+                                                              'required' => false,
+                                                              'default' => 'relative' )
+										),
 						'owini' => array( 	'section' => array( 'type' => 'string',
                                                               'required' => true,
                                                               'default' => '' ),
@@ -82,7 +85,7 @@ class owMultisiteOperators
         switch ( $operatorName )
         {	
 			case 'owurl':
-				$operatorValue = $this->owurl( $operatorValue );
+				$operatorValue = $this->owurl( $operatorValue, $namedParameters['serverURL'] );
 			break;
 			case 'owini':
 				$owini = new OWMultisiteIni();
@@ -96,10 +99,10 @@ class owMultisiteOperators
     }
     
 
-	protected function owurl( $node ) {
+	protected function owurl( $node, $serverURL ) {
 
 		try {
-		    $owurl = new OWMultisiteURL( $node ); 
+		    $owurl = new OWMultisiteURL( $node, $serverURL ); 
 		} catch( Exception $e ) {
 		    eZDebug::writeError( $e->getMessage() );
 		    return false;

@@ -5,17 +5,19 @@ class OWMultisiteURL
 {
 	
 	var $node;
+	var $serverURL;
 	
 	/**
 	 * Initialize node
 	 */
-	public function __construct( $node )
+	public function __construct( $node, $serverURL = 'relative' )
     {
     	if ( is_numeric( $node ) ) {
 			$node = eZContentObjectTreeNode::fetch( $node );
 		}
 		if ( $node instanceof eZContentObjectTreeNode ) {
 			$this->node = $node;
+			$this->serverURL = $serverURL;
 		} else {
             throw new Exception('[OWMultisite] : Node not found. Please verify your input type or your SiteLanguageList settings');
         }
@@ -72,6 +74,7 @@ class OWMultisiteURL
 			}
 		}
 		
+		$this->error( 'No siteaccess found.' );
 		return false;
 	}
 	
@@ -94,7 +97,7 @@ class OWMultisiteURL
 	 */
 	protected function buildInternalNodeURL() {
 		$url_alias = $this->node->attribute( 'url_alias' );
-		eZURI::transformURI($url_alias, false, 'full');
+		eZURI::transformURI($url_alias, false, $this->serverURL);
 		return $url_alias;
 	}
 	
@@ -125,8 +128,8 @@ class OWMultisiteURL
 		    return 'http://'.$domain.'/'.$url_alias;
 	    	
 		} else {
-			$this->error( 'No siteaccess found.' );
-			return false;
+
+			return $this->buildInternalNodeURL();
 		}
 	    
 	}
