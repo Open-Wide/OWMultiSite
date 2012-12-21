@@ -38,7 +38,7 @@ class OWMultisiteIni
 	/**
 	 * Get name of current siteaccess
 	 */
-	protected function getCurrentSiteAccessName() {
+	public static function getCurrentSiteAccessName() {
 		$siteaccess = eZSiteAccess::current();
 		return $siteaccess['name'];
 	}

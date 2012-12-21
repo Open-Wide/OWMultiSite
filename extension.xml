@@ -2,9 +2,9 @@
 <software>
     <metadata>
         <name>OWMultisite</name>
-        <version>1.0</version>
+        <version>1.2</version>
         <copyright>Copyright (C) 2012 OPEN WIDE</copyright>
         <license>GNU General Public License v3.0</license>
-        <info_url></info_url>
+        <info_url>https://github.com/Open-Wide/OWMultiSite/</info_url>
     </metadata>
 </software>

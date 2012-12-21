@@ -26,8 +26,8 @@ class OWMultisiteURL
     /**
      * Returns multisite full url from a node
      */
-	public function owurl() {
-		return $this->buildNodeURL();
+	public function owurl( $siteaccess = false ) {
+		return $this->buildNodeURL( $siteaccess );
 	}
 	
 	
@@ -35,24 +35,46 @@ class OWMultisiteURL
 	 * Check if the node is available in current siteaccess
 	 */
 	protected function isInternalNode( ) {
+		return $this->isInSiteaccess( OWMultisiteIni::getCurrentSiteAccessName() );
+	}
+	
+	/**
+	 * Check if the node is available in $siteaccess
+	 */
+	protected function isInSiteaccess( $siteaccess=false ) {
 		
-		$content_ini = eZIni::instance( 'content.ini' );
-		$current_root_node = $content_ini->variable('NodeSettings', 'RootNode');
-		
-		// Check if current root node is included in node path array
-		$path_array = $this->node->attribute( 'path_array' );
-		if ( in_array( $current_root_node, $path_array ) ) {
-			return true;
-		} else {
+		if ( $siteaccess ) {
+			$ow_multisite_ini = new OWMultisiteIni( );
+
 			// Check if node is in a PathPrefixEclude subtree (like Media, Users...)
-			$site_ini = eZIni::instance( 'site.ini' );
-			$path_prefix_exclude = $site_ini->variable('SiteAccessSettings', 'PathPrefixExclude');
+			$path_prefix_exclude = $ow_multisite_ini->variable('SiteAccessSettings', 'PathPrefixExclude', $siteaccess, 'site.ini');
 			$alias_array = explode( '/', $this->node->attribute( 'url_alias' ) );
 
 			if ( in_array( $alias_array[0], $path_prefix_exclude ) ) {
 				return true;
 			}
+			
+			// Check if root node is included in node path array
+			$path_array = $this->node->attribute( 'path_array' );
+			$content_ini = $ow_multisite_ini->getInstance( $siteaccess, 'content.ini' );
+			$root_node_array = array(
+											'RootNode',
+											'UserRootNode',
+											'MediaRootNode',
+											'SetupRootNode',
+											'DesignRootNode'
+			);
+			foreach ( $root_node_array as $root_node_id ) {
+				$root_node = $content_ini->variable('NodeSettings', $root_node_id);
+				if ( in_array( $root_node, $path_array ) ) {
+					return true;
+				}
+			}
+			
+		} else {
+			return false;
 		}
+		
 		return false;
 	}
 	
@@ -82,12 +104,12 @@ class OWMultisiteURL
 	/**
 	 * Build full URL from node
 	 */
-	protected function buildNodeURL( ) {
+	protected function buildNodeURL( $siteaccess=false ) {
 		
-		if ( $this->isInternalNode() ) {
+		if ( !$siteaccess && $this->isInternalNode() ) {
 			return $this->buildInternalNodeURL();
 		} else {
-			return $this->buildExternalNodeURL();
+			return $this->buildExternalNodeURL( $siteaccess );
 		}
 		
 	}
@@ -104,12 +126,14 @@ class OWMultisiteURL
 	/**
 	 * Build full URL from external node
 	 */
-	protected function buildExternalNodeURL() {
+	protected function buildExternalNodeURL( $siteaccess=false ) {
 		
-		$siteaccess = $this->getExternalNodeSiteaccess();
+		if ( ! ( $siteaccess && $this->isInSiteaccess( $siteaccess ) ) ) {
+			$siteaccess = $this->getExternalNodeSiteaccess();
+		}
 		if ( $siteaccess ) {
 			
-			$url_alias = $this->node->attribute( 'url_alias' );
+			$url_alias = $this->node->attribute( 'path_with_names' );
 			
 			$ow_multisite_ini = new OWMultisiteIni();
 			$site_ini = $ow_multisite_ini->getInstance( $siteaccess, 'site.ini' );
@@ -118,9 +142,9 @@ class OWMultisiteURL
 			$domain = trim( $site_ini->variable('SiteSettings', 'SiteURL'), '/' );
 	    	$path_prefix = $site_ini->variable('SiteAccessSettings', 'PathPrefix');
 	    	$path_prefix_exclude = $site_ini->variable('SiteAccessSettings', 'PathPrefixExclude');
-			
+	    	
 			$alias_array = explode('/', $url_alias);
-
+			
 			if ( $path_prefix && !in_array( $alias_array[0], $path_prefix_exclude ) ) {
 				$url_alias = preg_replace('#^'.$path_prefix.'/#','',$url_alias);
 			}

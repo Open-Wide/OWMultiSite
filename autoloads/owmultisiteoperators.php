@@ -40,9 +40,12 @@ class owMultisiteOperators
     {
 
 		return array( 		
-						'owurl' => array( 'serverURL' => array( 'type' => 'string',
+						'owurl' => array(	'siteaccess' => array( 'type' => 'string',
                                                               'required' => false,
-                                                              'default' => 'relative' )
+                                                              'default' => false ),
+											'serverURL' => array( 'type' => 'string',
+                                                              'required' => false,
+                                                              'default' => 'relative' ),
 										),
 						'owini' => array( 	'section' => array( 'type' => 'string',
                                                               'required' => true,
@@ -85,7 +88,7 @@ class owMultisiteOperators
         switch ( $operatorName )
         {	
 			case 'owurl':
-				$operatorValue = $this->owurl( $operatorValue, $namedParameters['serverURL'] );
+				$operatorValue = $this->owurl( $operatorValue, $namedParameters['serverURL'], $namedParameters['siteaccess'] );
 			break;
 			case 'owini':
 				$owini = new OWMultisiteIni();
@@ -99,7 +102,7 @@ class owMultisiteOperators
     }
     
 
-	protected function owurl( $node, $serverURL ) {
+	protected function owurl( $node, $serverURL, $siteaccess=false ) {
 
 		try {
 		    $owurl = new OWMultisiteURL( $node, $serverURL ); 
@@ -108,7 +111,7 @@ class owMultisiteOperators
 		    return false;
 		}
 		
-		return $owurl->owurl();
+		return $owurl->owurl( $siteaccess );
 	}
 
     /// \privatesection

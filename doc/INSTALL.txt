@@ -30,10 +30,16 @@ To use owurl operator, please check following settings :
 	 	RelatedSiteAccessList[]
 	 	(PathPrefixExclude)
 	 	(PathPrefix)
+	[RegionalSettings]
+		(SiteLanguageList[])
 
  - content.ini :
  	[NodeSettings]
  		RootNode
+ 		MediaRootNode
+ 		SetupRootNode
+ 		DesignRootNode
+ 		UserRootNode
  		
 --------------------------------------------------
 Hope you find it useful! 
