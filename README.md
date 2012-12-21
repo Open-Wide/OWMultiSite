@@ -1,7 +1,7 @@
 OWMultiSite
 ===========
 
-Provides multisite features for eZPublish > 4.1
+Provides multisite features for eZPublish >= 4.4
 
 Features
 -----------------
