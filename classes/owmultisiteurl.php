@@ -6,12 +6,15 @@ class OWMultisiteURL
 	
 	var $node;
 	var $serverURL;
+	var $forceSiteaccess;
 	
 	/**
 	 * Initialize node
 	 */
 	public function __construct( $node, $serverURL = 'relative' )
     {
+    	$this->forceSiteaccess = false;
+    	
     	if ( is_numeric( $node ) ) {
 			$node = eZContentObjectTreeNode::fetch( $node );
 		}
@@ -27,6 +30,9 @@ class OWMultisiteURL
      * Returns multisite full url from a node
      */
 	public function owurl( $siteaccess = false ) {
+		if ( $siteaccess ) {
+			$this->forceSiteaccess = $siteaccess;
+		}
 		return $this->buildNodeURL( $siteaccess );
 	}
 	
@@ -44,6 +50,11 @@ class OWMultisiteURL
 	protected function isInSiteaccess( $siteaccess=false ) {
 		
 		if ( $siteaccess ) {
+
+			if ( $this->isSiteaccessExcluded( $siteaccess ) ) {
+				return false;
+			}
+			
 			$ow_multisite_ini = new OWMultisiteIni( );
 
 			// Check if node is in a PathPrefixEclude subtree (like Media, Users...)
@@ -90,9 +101,13 @@ class OWMultisiteURL
 
 		$ow_multisite_ini = new OWMultisiteIni();
 		foreach( $related_siteaccess as $siteaccess ) {
-			$root_node = $ow_multisite_ini->variable( 'NodeSettings', 'RootNode', $siteaccess, 'content.ini' );
-			if ( in_array( $root_node, $path_array ) ) {
-				return $siteaccess;
+			if ( !$this->isSiteaccessExcluded( $siteaccess ) ) {
+				
+				$root_node = $ow_multisite_ini->variable( 'NodeSettings', 'RootNode', $siteaccess, 'content.ini' );
+				if ( in_array( $root_node, $path_array ) ) {
+					return $siteaccess;
+				}
+				
 			}
 		}
 		
@@ -144,9 +159,8 @@ class OWMultisiteURL
 	    	$path_prefix_exclude = $site_ini->variable('SiteAccessSettings', 'PathPrefixExclude');
 	    	
 			$alias_array = explode('/', $url_alias);
-			
 			if ( $path_prefix && !in_array( $alias_array[0], $path_prefix_exclude ) ) {
-				$url_alias = preg_replace('#^'.$path_prefix.'/#','',$url_alias);
+				$url_alias = preg_replace('#^'.$path_prefix.'/?#','',$url_alias);
 			}
 			
 		    return 'http://'.$domain.'/'.$url_alias;
@@ -158,6 +172,24 @@ class OWMultisiteURL
 	    
 	}
 	
+	/**
+	 * Check if siteaccess is excluded or forced
+	 */
+	protected function isSiteaccessExcluded( $siteaccess ) {
+		
+		if ( $siteaccess == $this->forceSiteaccess ) {
+			return false;
+		}
+		
+		$ini = eZINI::instance( 'owmultisite.ini' );
+		$exclude_siteaccess = $ini->variable( 'SiteAccess', 'Exclude' );
+		if ( in_array( $siteaccess, $exclude_siteaccess ) ) {
+			return true;
+		}
+		
+		return false;
+
+	}
 
 	/**
      * Display error message

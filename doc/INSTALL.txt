@@ -41,6 +41,14 @@ To use owurl operator, please check following settings :
  		DesignRootNode
  		UserRootNode
  		
+ - owmultisite.ini
+
+
+-------------------------
+A question ?
+-------------------------
+You can open a forum topic here : http://projects.ez.no/owmultisite/forum
+
 --------------------------------------------------
 Hope you find it useful! 
 
