@@ -15,7 +15,7 @@ Details
 You also can specify a siteaccess if you want to force this.
 This operator supports host, PathPrefix and SiteURI settings.
 
-*owini* allow you to read settings for a specific siteaccess, even if it is not current siteaccess.
+*owini* allows you to read settings for a specific siteaccess, even if it is not current siteaccess.
 
 A question ?
 -------------------------
