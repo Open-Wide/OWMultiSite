@@ -182,11 +182,12 @@ class OWMultisiteURL
 		}
 		
 		$ini = eZINI::instance( 'owmultisite.ini' );
-		$exclude_siteaccess = $ini->variable( 'SiteAccess', 'Exclude' );
-		if ( in_array( $siteaccess, $exclude_siteaccess ) ) {
-			return true;
+		if ( $ini->hasVariable( 'SiteAccess', 'Exclude' ) ) {
+			$exclude_siteaccess = $ini->variable( 'SiteAccess', 'Exclude' );
+			if ( in_array( $siteaccess, $exclude_siteaccess ) ) {
+				return true;
+			}
 		}
-		
 		return false;
 
 	}
