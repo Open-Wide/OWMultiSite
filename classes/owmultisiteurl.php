@@ -149,7 +149,9 @@ class OWMultisiteURL
 		if ( $siteaccess ) {
 			
 			$url_alias = $this->node->attribute( 'path_with_names' );
-			
+			if (!$url_alias) {
+				$url_alias = $this->node->attribute( 'path_identification_string' );
+			}
 			$ow_multisite_ini = new OWMultisiteIni();
 			$site_ini = $ow_multisite_ini->getInstance( $siteaccess, 'site.ini' );
 			$content_ini = $ow_multisite_ini->getInstance( $siteaccess, 'content.ini' );
