@@ -165,7 +165,13 @@ class OWMultisiteURL
 				$url_alias = preg_replace('#^'.$path_prefix.'/?#','',$url_alias);
 			}
 			
-		    return 'http://'.$domain.'/'.$url_alias;
+		    if ( $this->serverURL == 'relative' ) {
+				$url = '/'.$url_alias;
+			} else {
+				$url = 'http://'.$domain.'/'.$url_alias;
+			}
+
+		    return $url;
 	    	
 		} else {
 
